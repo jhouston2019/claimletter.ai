@@ -1,8 +1,8 @@
--- TaxLetterHelp Database Schema
+-- ClaimLetterAI Database Schema
 -- Run this in Supabase SQL Editor
 
 -- Table to track the full lifecycle of each letter/response
-create table if not exists public.tlh_letters (
+create table if not exists public.cla_letters (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
   user_email text,
@@ -17,14 +17,14 @@ create table if not exists public.tlh_letters (
 );
 
 -- Helpful indexes
-create index if not exists tlh_letters_created_at_idx on public.tlh_letters (created_at desc);
-create index if not exists tlh_letters_session_idx on public.tlh_letters (stripe_session_id);
+create index if not exists cla_letters_created_at_idx on public.cla_letters (created_at desc);
+create index if not exists cla_letters_session_idx on public.cla_letters (stripe_session_id);
 
 -- Enable RLS and lock down
-alter table public.tlh_letters enable row level security;
+alter table public.cla_letters enable row level security;
 
 -- Only service role (server) can read/write by policy; anonymous gets nothing
-create policy "deny all by default" on public.tlh_letters
+create policy "deny all by default" on public.cla_letters
   as permissive for all
   to public
   using (false)

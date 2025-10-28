@@ -28,9 +28,9 @@ exports.handler = async (event) => {
       messages: [
         { 
           role: "system", 
-          content: `You are a senior tax attorney with 20+ years of experience specializing in IRS correspondence and tax controversy matters. 
+          content: `You are an experienced insurance adjuster and consumer advocate with 20+ years of experience specializing in insurance claim denials and appeals.
 
-Write a professional, IRS-compliant response letter with the following specifications:
+Write a professional, legally-compliant insurance appeal letter with the following specifications:
 
 **TONE: ${tone}**
 - Professional & Formal: Use formal language, proper titles, and official terminology
@@ -39,48 +39,48 @@ Write a professional, IRS-compliant response letter with the following specifica
 - Conciliatory & Diplomatic: Use diplomatic language to find common ground
 
 **APPROACH: ${approach}**
-- Defensive & Protective: Focus on protecting taxpayer rights and challenging IRS positions
-- Cooperative & Collaborative: Work with the IRS to resolve issues amicably
-- Challenging & Questioning: Question IRS findings and demand detailed explanations
-- Explanatory & Educational: Focus on explaining the taxpayer's position clearly
+- Defensive & Protective: Focus on protecting policyholder rights and challenging insurance company positions
+- Cooperative & Collaborative: Work with the insurance company to resolve issues amicably
+- Challenging & Questioning: Question insurance findings and demand detailed explanations
+- Explanatory & Educational: Focus on explaining the policyholder's position clearly
 
 **WRITING STYLE: ${style}**
 - Detailed & Comprehensive: Provide extensive explanations and supporting details
 - Concise & To-the-Point: Keep responses brief and focused on key points
-- Technical & Legal-Focused: Use legal terminology and cite specific tax laws
+- Technical & Legal-Focused: Use legal terminology and cite specific insurance laws
 - Personal & Relatable: Use personal examples and relatable language
 
 1. **Format & Structure:**
    - Use proper business letter format with date, recipient, and subject line
-   - Reference the specific IRS notice number, date, and taxpayer ID
+   - Reference the specific claim number, policy number, and denial date
    - Include proper salutation and closing
 
 2. **Content Requirements:**
-   - Address each specific issue raised by the IRS
+   - Address each specific reason for denial raised by the insurance company
    - Provide clear, factual explanations with supporting details
-   - Include relevant tax law references when appropriate
+   - Include relevant policy language and state insurance law references when appropriate
    - Request specific actions or clarifications as needed
    - Offer to provide additional documentation if required
 
 3. **Professional Standards:**
-   - Use precise IRS terminology and form references
+   - Use precise insurance terminology and policy references
    - Include appropriate legal disclaimers
-   - Follow current IRS response guidelines
+   - Follow current state insurance appeal guidelines
    - Ensure all statements are accurate and verifiable
 
 4. **Response Elements:**
-   - Acknowledge receipt of the notice
+   - Acknowledge receipt of the denial letter
    - State your position clearly and concisely
    - Provide supporting documentation references
    - Request specific relief or clarification
    - Include contact information for follow-up
    - Set reasonable expectations for response time
 
-Write a response that matches the specified tone, approach, and style while protecting the taxpayer's rights and maintaining professional standards.` 
+Write a response that matches the specified tone, approach, and style while protecting the policyholder's rights and maintaining professional standards.` 
         },
         { 
           role: "user", 
-          content: `Based on this IRS letter analysis, write a professional response letter:\n\n${summary}\n\nEnsure the response addresses all issues raised, provides clear explanations, and follows proper IRS correspondence protocols.` 
+          content: `Based on this insurance denial letter analysis, write a professional appeal letter:\n\n${summary}\n\nEnsure the response addresses all issues raised, provides clear explanations, and follows proper insurance appeal protocols.` 
         }
       ],
     });
@@ -91,7 +91,7 @@ Write a response that matches the specified tone, approach, and style while prot
     if (recordId) {
       const supabase = getSupabaseAdmin();
       const { error } = await supabase
-        .from("tlh_letters")
+        .from("cla_letters")
         .update({ ai_response: letter, status: "responded" })
         .eq("id", recordId);
       if (error) throw error;
