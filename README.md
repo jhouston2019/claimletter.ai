@@ -1,15 +1,15 @@
-# TaxLetterHelp.com
+# ClaimLetterAI
 
-AI-powered tax letter analysis and response generation platform.
+AI-powered insurance claim denial analysis and appeal letter generation platform.
 
 ## Features
 
 - 🔐 **User Authentication** - Secure login/signup with Supabase
-- 📄 **Document Upload** - Upload IRS letters in PDF/image format
-- 🤖 **AI Analysis** - Get instant explanations of tax letters
-- ✍️ **Response Generation** - AI drafts professional response letters
-- 💳 **Subscription Plans** - Stripe-powered payment system
-- 📥 **Download Options** - Export responses as PDF or DOCX
+- 📄 **Document Upload** - Upload insurance denial letters in PDF/image format
+- 🤖 **AI Analysis** - Get instant explanations of denial letters
+- ✍️ **Appeal Generation** - AI drafts professional appeal letters
+- 💳 **One-time Payment** - Stripe-powered payment system ($49)
+- 📥 **Download Options** - Export appeals as PDF or DOCX
 - 🖥️ **Dashboard** - Manage your letters and account
 
 ## Tech Stack
@@ -39,8 +39,8 @@ Required environment variables:
 - `OPENAI_API_KEY` - Your OpenAI API key
 - `STRIPE_SECRET_KEY` - Your Stripe secret key
 - `STRIPE_PUBLIC_KEY` - Your Stripe publishable key
-- `STRIPE_PRICE_*` - Your Stripe price IDs for each plan
-- `SITE_URL` - Your production domain
+- `STRIPE_PRICE_ID` - Your Stripe price ID for the appeal service
+- `SITE_URL` - Your production domain (https://www.claimletter.ai)
 
 ### 2. Supabase Setup
 
@@ -54,8 +54,8 @@ Required environment variables:
 ### 3. Stripe Setup
 
 1. Create a Stripe account
-2. Create products and prices for your subscription plans
-3. Add the price IDs to your environment variables
+2. Create a product for "Claim Letter Generation" at $49
+3. Add the price ID to your environment variables
 
 ### 4. OpenAI Setup
 
@@ -87,7 +87,7 @@ Deploy to Netlify:
 ## File Structure
 
 ```
-taxletterhelp/
+claimletterai/
 ├── src/
 │   ├── components/
 │   │   ├── Auth.js              # Authentication functions
@@ -96,19 +96,24 @@ taxletterhelp/
 ├── netlify/
 │   └── functions/
 │       ├── analyze-letter.js    # AI letter analysis
-│       ├── generate-response.js # AI response generation
+│       ├── generate-response.js # AI appeal generation
 │       ├── create-checkout-session.js # Stripe checkout
 │       └── generate-pdf.js      # PDF generation
 ├── supabase/
 │   └── migrations/
 │       ├── 20251001_create_users_table.sql
 │       └── 20251001_create_documents_table.sql
+├── examples/
+│   ├── claim-denial-sample.pdf
+│   └── homeowners-appeal-sample.pdf
 ├── index.html                   # Homepage
+├── examples.html                # Sample letters page
+├── resources.html               # Appeal resources page
 ├── login.html                   # Login page
 ├── signup.html                  # Signup page
 ├── upload.html                  # Document upload
 ├── dashboard.html               # User dashboard
-├── pricing.html                 # Subscription plans
+├── pricing.html                 # Pricing page
 ├── success.html                 # Payment success
 ├── cancel.html                  # Payment cancelled
 ├── privacy.html                 # Privacy policy
@@ -121,8 +126,8 @@ taxletterhelp/
 
 ### Netlify Functions
 
-- `/.netlify/functions/analyze-letter` - Analyze uploaded tax letters
-- `/.netlify/functions/generate-response` - Generate response letters
+- `/.netlify/functions/analyze-letter` - Analyze uploaded insurance denial letters
+- `/.netlify/functions/generate-response` - Generate appeal letters
 - `/.netlify/functions/create-checkout-session` - Create Stripe checkout
 - `/.netlify/functions/generate-pdf` - Generate PDF documents
 
@@ -137,7 +142,7 @@ taxletterhelp/
 
 - Privacy Policy
 - Terms of Service
-- Legal Disclaimer (Not Legal Advice)
+- Legal Disclaimer (Not Legal or Insurance Advice)
 - GDPR compliance considerations
 
 ## Support
