@@ -1,4 +1,4 @@
--- ClaimLetterAI Database Schema
+-- Claim Letter Help Database Schema
 -- Run this in Supabase SQL Editor
 
 -- Table to track the full lifecycle of each letter/response

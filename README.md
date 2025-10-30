@@ -1,4 +1,4 @@
-# ClaimLetterAI
+# Claim Letter Help
 
 AI-powered insurance claim denial analysis and appeal letter generation platform.
 

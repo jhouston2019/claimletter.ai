@@ -28,9 +28,9 @@ export async function handler(event) {
       text: 'Attached is your AI-generated insurance appeal letter PDF.',
       html: `
         <h2>Your Insurance Appeal Letter is Ready</h2>
-        <p>Thank you for using ClaimLetterAI! Your AI-generated appeal letter is attached as a PDF.</p>
+        <p>Thank you for using Claim Letter Help! Your AI-generated appeal letter is attached as a PDF.</p>
         <p>Please review the letter carefully before sending it to your insurance company. Remember to consult with an insurance attorney for complex matters.</p>
-        <p>Best regards,<br>The ClaimLetterAI Team</p>
+        <p>Best regards,<br>The Claim Letter Help Team</p>
       `,
       attachments: [{
         content: pdfBuffer.toString('base64'),
