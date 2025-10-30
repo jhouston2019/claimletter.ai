@@ -106,6 +106,11 @@ async function checkSendGrid() {
       return { ok: false, ms: hrTimeMs(start), detail: 'API key format invalid (should start with SG.)' };
     }
     
+    // Validate API key format (full key should be ~70 characters)
+    if (apiKey.length < 60) {
+      return { ok: false, ms: hrTimeMs(start), detail: 'API key appears truncated (should be ~70 characters)' };
+    }
+    
     sgMail.setApiKey(apiKey);
     
     // Use sandbox mode to avoid sending actual emails
@@ -124,13 +129,26 @@ async function checkSendGrid() {
     // Check for specific error types
     if (err.response) {
       const statusCode = err.response.statusCode || err.response[0]?.statusCode;
+      const errorBody = err.response.body || (Array.isArray(err.response) ? err.response[0]?.body : null);
+      
       if (statusCode === 401 || statusCode === 403) {
         const fromEmail = process.env.FROM_EMAIL || process.env.SUPPORT_EMAIL || 'your sender email';
-        return { 
-          ok: false, 
-          ms: hrTimeMs(start), 
-          detail: `Unauthorized - Verify sender email "${fromEmail}" in SendGrid Dashboard → Settings → Sender Authentication` 
-        };
+        let detail = `Unauthorized - Verify sender email "${fromEmail}" in SendGrid Dashboard → Settings → Sender Authentication`;
+        
+        // Try to get more specific error info
+        if (errorBody && typeof errorBody === 'string') {
+          try {
+            const parsed = JSON.parse(errorBody);
+            if (parsed.errors && parsed.errors.length > 0) {
+              detail += ` (${parsed.errors[0].message || parsed.errors[0]})`;
+            }
+          } catch (e) {
+            // Not JSON, use as is
+            detail += ` (${errorBody})`;
+          }
+        }
+        
+        return { ok: false, ms: hrTimeMs(start), detail };
       }
       return { ok: false, ms: hrTimeMs(start), detail: `SendGrid API error: ${statusCode} - ${err.message}` };
     }
