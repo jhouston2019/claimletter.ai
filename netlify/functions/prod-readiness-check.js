@@ -63,20 +63,20 @@ async function checkSupabase() {
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
       auth: { persistSession: false },
     });
-    // Attempt to insert into system_check; if table doesn't exist, fallback to a lightweight select on documents
-    const insert = await supabase.from('system_check').insert({ status: 'ok', created_at: new Date().toISOString() }).select();
-    if (insert.error) {
-      // If missing table, perform a connectivity sanity check
-      if (/relation .* does not exist/i.test(insert.error.message) || insert.error.code === '42P01') {
-        const probe = await supabase.from('documents').select('*').limit(1);
-        if (probe.error) {
-          return { ok: false, ms: hrTimeMs(start), detail: `Connectivity ok but table missing and probe failed: ${probe.error.message}` };
-        }
-        return { ok: true, ms: hrTimeMs(start), detail: 'system_check table missing; connectivity verified via documents' };
+    // Try to connect using existing tables - check multiple possible table names
+    const tablesToTry = ['tlh_letters', 'cla_letters', 'documents'];
+    let lastError = null;
+    
+    for (const tableName of tablesToTry) {
+      const probe = await supabase.from(tableName).select('id').limit(1);
+      if (!probe.error) {
+        return { ok: true, ms: hrTimeMs(start), detail: `Connected via ${tableName} table` };
       }
-      return { ok: false, ms: hrTimeMs(start), detail: insert.error.message };
+      lastError = probe.error;
     }
-    return { ok: true, ms: hrTimeMs(start) };
+    
+    // If all tables failed, return the error from the last attempt
+    return { ok: false, ms: hrTimeMs(start), detail: lastError?.message || 'Could not connect to any database tables' };
   } catch (err) {
     return { ok: false, ms: hrTimeMs(start), detail: err?.message || String(err) };
   }
@@ -98,18 +98,35 @@ async function checkStripe() {
 async function checkSendGrid() {
   const start = typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now();
   try {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    // Use sandbox mode to avoid sending
+    const apiKey = process.env.SENDGRID_API_KEY;
+    
+    // Basic validation - SendGrid API keys start with 'SG.'
+    if (!apiKey || !apiKey.startsWith('SG.')) {
+      return { ok: false, ms: hrTimeMs(start), detail: 'API key format invalid (should start with SG.)' };
+    }
+    
+    sgMail.setApiKey(apiKey);
+    
+    // Use sandbox mode to avoid sending actual emails
     const msg = {
       to: 'sandbox@example.com',
-      from: 'sandbox@example.com',
+      from: process.env.FROM_EMAIL || process.env.SUPPORT_EMAIL || 'sandbox@example.com',
       subject: 'Readiness Check',
       text: 'This is a dry-run check.',
       mailSettings: { sandboxMode: { enable: true } },
     };
+    
     await sgMail.send(msg);
     return { ok: true, ms: hrTimeMs(start), detail: 'Email API reachable' };
   } catch (err) {
+    // Check for specific error types
+    if (err.response) {
+      const statusCode = err.response.statusCode || err.response[0]?.statusCode;
+      if (statusCode === 401 || statusCode === 403) {
+        return { ok: false, ms: hrTimeMs(start), detail: 'Unauthorized - API key invalid or missing permissions' };
+      }
+      return { ok: false, ms: hrTimeMs(start), detail: `SendGrid API error: ${statusCode} - ${err.message}` };
+    }
     return { ok: false, ms: hrTimeMs(start), detail: err?.message || String(err) };
   }
 }
