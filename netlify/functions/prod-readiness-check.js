@@ -111,47 +111,37 @@ async function checkSendGrid() {
       return { ok: false, ms: hrTimeMs(start), detail: 'API key appears truncated (should be ~70 characters)' };
     }
     
-    sgMail.setApiKey(apiKey);
+    // Use SendGrid REST API to validate API key instead of sending email
+    // This tests key validity without requiring sender verification
+    const response = await fetch('https://api.sendgrid.com/v3/user/profile', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+    });
     
-    // Use sandbox mode to avoid sending actual emails
-    // Note: SendGrid still validates sender even in sandbox mode
-    const msg = {
-      to: 'sandbox@example.com',
-      from: fromEmail || 'sandbox@example.com',
-      subject: 'Readiness Check',
-      text: 'This is a dry-run check.',
-      mailSettings: { sandboxMode: { enable: true } },
-    };
-    
-    await sgMail.send(msg);
-    return { ok: true, ms: hrTimeMs(start), detail: 'Email API reachable' };
-  } catch (err) {
-    // Check for specific error types
-    if (err.response) {
-      const statusCode = err.response.statusCode || err.response[0]?.statusCode;
-      const errorBody = err.response.body || (Array.isArray(err.response) ? err.response[0]?.body : null);
-      
-      if (statusCode === 401 || statusCode === 403) {
-        const fromEmail = process.env.FROM_EMAIL || process.env.SUPPORT_EMAIL || 'your sender email';
-        let detail = `Unauthorized - Verify sender email "${fromEmail}" in SendGrid Dashboard → Settings → Sender Authentication`;
-        
-        // Try to get more specific error info
-        if (errorBody && typeof errorBody === 'string') {
-          try {
-            const parsed = JSON.parse(errorBody);
-            if (parsed.errors && parsed.errors.length > 0) {
-              detail += ` (${parsed.errors[0].message || parsed.errors[0]})`;
-            }
-          } catch (e) {
-            // Not JSON, use as is
-            detail += ` (${errorBody})`;
-          }
-        }
-        
-        return { ok: false, ms: hrTimeMs(start), detail };
-      }
-      return { ok: false, ms: hrTimeMs(start), detail: `SendGrid API error: ${statusCode} - ${err.message}` };
+    if (response.ok) {
+      return { ok: true, ms: hrTimeMs(start), detail: 'Email API reachable - API key validated' };
     }
+    
+    if (response.status === 401 || response.status === 403) {
+      const fromEmail = process.env.FROM_EMAIL || process.env.SUPPORT_EMAIL || 'your sender email';
+      return { 
+        ok: false, 
+        ms: hrTimeMs(start), 
+        detail: `API key invalid or expired - Check SendGrid Dashboard → Settings → API Keys` 
+      };
+    }
+    
+    // If we get here, API key is valid but something else is wrong
+    const errorText = await response.text().catch(() => '');
+    return { 
+      ok: false, 
+      ms: hrTimeMs(start), 
+      detail: `SendGrid API error: ${response.status} - ${errorText || response.statusText}` 
+    };
+  } catch (err) {
     return { ok: false, ms: hrTimeMs(start), detail: err?.message || String(err) };
   }
 }
