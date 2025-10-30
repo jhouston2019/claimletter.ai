@@ -99,6 +99,7 @@ async function checkSendGrid() {
   const start = typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now();
   try {
     const apiKey = process.env.SENDGRID_API_KEY;
+    const fromEmail = process.env.FROM_EMAIL || process.env.SUPPORT_EMAIL;
     
     // Basic validation - SendGrid API keys start with 'SG.'
     if (!apiKey || !apiKey.startsWith('SG.')) {
@@ -108,9 +109,10 @@ async function checkSendGrid() {
     sgMail.setApiKey(apiKey);
     
     // Use sandbox mode to avoid sending actual emails
+    // Note: SendGrid still validates sender even in sandbox mode
     const msg = {
       to: 'sandbox@example.com',
-      from: process.env.FROM_EMAIL || process.env.SUPPORT_EMAIL || 'sandbox@example.com',
+      from: fromEmail || 'sandbox@example.com',
       subject: 'Readiness Check',
       text: 'This is a dry-run check.',
       mailSettings: { sandboxMode: { enable: true } },
@@ -123,7 +125,12 @@ async function checkSendGrid() {
     if (err.response) {
       const statusCode = err.response.statusCode || err.response[0]?.statusCode;
       if (statusCode === 401 || statusCode === 403) {
-        return { ok: false, ms: hrTimeMs(start), detail: 'Unauthorized - API key invalid or missing permissions' };
+        const fromEmail = process.env.FROM_EMAIL || process.env.SUPPORT_EMAIL || 'your sender email';
+        return { 
+          ok: false, 
+          ms: hrTimeMs(start), 
+          detail: `Unauthorized - Verify sender email "${fromEmail}" in SendGrid Dashboard → Settings → Sender Authentication` 
+        };
       }
       return { ok: false, ms: hrTimeMs(start), detail: `SendGrid API error: ${statusCode} - ${err.message}` };
     }
