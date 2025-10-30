@@ -4,11 +4,13 @@
   "description": "Netlify functions for Tax Letter Help AI",
   "type": "commonjs",
   "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
     "@supabase/supabase-js": "^2.76.1",
     "mammoth": "^1.11.0",
     "node-fetch": "^3.3.2",
     "openai": "^4.20.0",
     "pdf-parse": "^2.4.5",
+    "stripe": "^14.0.0",
     "tesseract.js": "^6.0.1"
   }
 }

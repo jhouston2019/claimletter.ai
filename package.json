@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build && npm run copy-html",
     "copy-html": "copyfiles *.html dist/ && copyfiles styles.css dist/",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prod:check": "node scripts/prod-check.mjs",
+    "prod:check:netlify": "node scripts/check-prod-netlify.mjs"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",
