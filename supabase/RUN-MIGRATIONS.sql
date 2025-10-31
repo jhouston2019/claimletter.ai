@@ -83,7 +83,8 @@ ALTER TABLE public.usage_tracking ENABLE ROW LEVEL SECURITY;
 
 -- 8. RLS Policies for tlh_letters
 -- Deny all by default - only service role (server) can access
-CREATE POLICY IF NOT EXISTS "deny_all_tlh_letters" ON public.tlh_letters
+DROP POLICY IF EXISTS "deny_all_tlh_letters" ON public.tlh_letters;
+CREATE POLICY "deny_all_tlh_letters" ON public.tlh_letters
   AS PERMISSIVE FOR ALL
   TO public
   USING (false)
@@ -91,25 +92,30 @@ CREATE POLICY IF NOT EXISTS "deny_all_tlh_letters" ON public.tlh_letters
 
 -- 9. RLS Policies for cla_letters  
 -- Deny all by default - only service role (server) can access
-CREATE POLICY IF NOT EXISTS "deny_all_cla_letters" ON public.cla_letters
+DROP POLICY IF EXISTS "deny_all_cla_letters" ON public.cla_letters;
+CREATE POLICY "deny_all_cla_letters" ON public.cla_letters
   AS PERMISSIVE FOR ALL
   TO public
   USING (false)
   WITH CHECK (false);
 
 -- 10. RLS Policies for users (optional - if you want users to access their own records)
-CREATE POLICY IF NOT EXISTS "Users can view own profile" ON public.users
+DROP POLICY IF EXISTS "Users can view own profile" ON public.users;
+CREATE POLICY "Users can view own profile" ON public.users
   FOR SELECT USING (auth.uid() = id);
 
-CREATE POLICY IF NOT EXISTS "Users can insert own profile" ON public.users
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.users;
+CREATE POLICY "Users can insert own profile" ON public.users
   FOR INSERT WITH CHECK (auth.uid() = id);
 
 -- 11. RLS Policies for subscriptions
-CREATE POLICY IF NOT EXISTS "Users can view own subscriptions" ON public.subscriptions
+DROP POLICY IF EXISTS "Users can view own subscriptions" ON public.subscriptions;
+CREATE POLICY "Users can view own subscriptions" ON public.subscriptions
   FOR SELECT USING (auth.uid() = user_id);
 
 -- 12. RLS Policies for usage_tracking
-CREATE POLICY IF NOT EXISTS "Users can view own usage" ON public.usage_tracking
+DROP POLICY IF EXISTS "Users can view own usage" ON public.usage_tracking;
+CREATE POLICY "Users can view own usage" ON public.usage_tracking
   FOR SELECT USING (auth.uid() = user_id);
 
 -- 13. Function to update updated_at timestamp automatically
