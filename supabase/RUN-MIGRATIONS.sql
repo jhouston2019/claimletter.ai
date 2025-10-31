@@ -10,22 +10,7 @@ CREATE TABLE IF NOT EXISTS public.users (
   created_at timestamptz DEFAULT now()
 );
 
--- 2. Create tlh_letters table (used by analyze-letter, webhook, admin, export-pdf)
-CREATE TABLE IF NOT EXISTS public.tlh_letters (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  user_email text,
-  stripe_session_id text,
-  stripe_payment_status text CHECK (stripe_payment_status IN ('unpaid','paid','refunded')) DEFAULT 'unpaid',
-  price_id text,
-  letter_text text,
-  analysis jsonb,           -- structured analysis from AI
-  summary text,             -- plain text summary
-  ai_response text,         -- final response letter
-  status text CHECK (status IN ('uploaded','analyzed','responded','error')) DEFAULT 'uploaded'
-);
-
--- 3. Create cla_letters table (used by send-email, generate-response)
+-- 2. Create cla_letters table (used by all functions)
 CREATE TABLE IF NOT EXISTS public.cla_letters (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -65,8 +50,6 @@ CREATE TABLE IF NOT EXISTS public.usage_tracking (
 );
 
 -- 6. Create indexes for performance
-CREATE INDEX IF NOT EXISTS idx_tlh_letters_created_at ON public.tlh_letters (created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_tlh_letters_session ON public.tlh_letters (stripe_session_id);
 CREATE INDEX IF NOT EXISTS idx_cla_letters_created_at ON public.cla_letters (created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_cla_letters_session ON public.cla_letters (stripe_session_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON public.subscriptions(user_id);
@@ -76,21 +59,11 @@ CREATE INDEX IF NOT EXISTS idx_usage_tracking_created_at ON public.usage_trackin
 
 -- 7. Enable Row Level Security (RLS) on all tables
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.tlh_letters ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cla_letters ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.usage_tracking ENABLE ROW LEVEL SECURITY;
 
--- 8. RLS Policies for tlh_letters
--- Deny all by default - only service role (server) can access
-DROP POLICY IF EXISTS "deny_all_tlh_letters" ON public.tlh_letters;
-CREATE POLICY "deny_all_tlh_letters" ON public.tlh_letters
-  AS PERMISSIVE FOR ALL
-  TO public
-  USING (false)
-  WITH CHECK (false);
-
--- 9. RLS Policies for cla_letters  
+-- 8. RLS Policies for cla_letters  
 -- Deny all by default - only service role (server) can access
 DROP POLICY IF EXISTS "deny_all_cla_letters" ON public.cla_letters;
 CREATE POLICY "deny_all_cla_letters" ON public.cla_letters

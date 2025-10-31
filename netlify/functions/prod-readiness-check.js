@@ -64,7 +64,7 @@ async function checkSupabase() {
       auth: { persistSession: false },
     });
     // Try to connect using existing tables - check multiple possible table names
-    const tablesToTry = ['tlh_letters', 'cla_letters', 'documents'];
+    const tablesToTry = ['cla_letters', 'documents'];
     let lastError = null;
     
     for (const tableName of tablesToTry) {

@@ -7,7 +7,7 @@ export async function handler(event) {
     if (!recordId) return { statusCode: 400, body: 'Missing recordId' };
 
     const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase.from('tlh_letters').select('ai_response').eq('id', recordId).single();
+    const { data, error } = await supabase.from('cla_letters').select('ai_response').eq('id', recordId).single();
     if (error || !data) throw error || new Error('No record');
 
     const doc = new PDFDocument();

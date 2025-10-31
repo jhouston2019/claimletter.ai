@@ -10,7 +10,7 @@ export async function handler(event) {
   try {
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
-      .from("tlh_letters")
+      .from("cla_letters")
       .select("id, created_at, user_email, stripe_payment_status, price_id, status, summary")
       .order("created_at", { ascending: false })
       .limit(100);

@@ -25,7 +25,7 @@ export async function handler(event) {
       if (recordId) {
         const supabase = getSupabaseAdmin();
         await supabase
-          .from("tlh_letters")
+          .from("cla_letters")
           .update({
             stripe_session_id: session.id,
             stripe_payment_status: session.payment_status,

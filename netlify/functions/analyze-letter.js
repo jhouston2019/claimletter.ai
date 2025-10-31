@@ -316,7 +316,7 @@ exports.handler = async (event) => {
       try {
         const supabase = getSupabaseAdmin();
         const { data, error } = await supabase
-          .from("tlh_letters")
+          .from("cla_letters")
           .insert({
             user_email: userEmail,
             stripe_session_id: stripeSessionId,
