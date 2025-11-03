@@ -22,10 +22,10 @@
 
 ### **1.3 Stripe Setup**
 - [ ] Create Stripe account at [stripe.com](https://stripe.com)
-- [ ] Create product: "Standard Letter Response" ($49 one-time)
+- [ ] Create product: "Standard Letter Response" ($79 one-time)
 - [ ] Create product: "Complex Letter Response" ($99 one-time)
 - [ ] Create product: "Starter Plan" ($19/month)
-- [ ] Create product: "Pro Plan" ($49/month)
+- [ ] Create product: "Pro Plan" ($79/month)
 - [ ] Create product: "Pro+ Plan" ($99/month)
 - [ ] Copy all price IDs from Stripe dashboard
 - [ ] Set up webhook endpoint: `https://your-domain.netlify.app/.netlify/functions/stripe-webhook`

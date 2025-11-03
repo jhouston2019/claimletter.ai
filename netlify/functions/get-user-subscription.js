@@ -80,7 +80,7 @@ function getPlanLimits(planType) {
     'STANDARD': {
       lettersPerMonth: 1,
       features: ['analysis', 'response_generation', 'pdf_download', 'docx_download'],
-      price: 49
+      price: 79
     },
     'COMPLEX': {
       lettersPerMonth: 1,
@@ -95,7 +95,7 @@ function getPlanLimits(planType) {
     'PRO': {
       lettersPerMonth: 3,
       features: ['analysis', 'response_generation', 'pdf_download', 'docx_download', 'email_support'],
-      price: 49
+      price: 79
     },
     'PROPLUS': {
       lettersPerMonth: -1, // unlimited

@@ -8,7 +8,7 @@ AI-powered insurance claim denial analysis and appeal letter generation platform
 - 📄 **Document Upload** - Upload insurance denial letters in PDF/image format
 - 🤖 **AI Analysis** - Get instant explanations of denial letters
 - ✍️ **Appeal Generation** - AI drafts professional appeal letters
-- 💳 **One-time Payment** - Stripe-powered payment system ($49)
+- 💳 **One-time Payment** - Stripe-powered payment system ($79)
 - 📥 **Download Options** - Export appeals as PDF or DOCX
 - 🖥️ **Dashboard** - Manage your letters and account
 
@@ -54,7 +54,7 @@ Required environment variables:
 ### 3. Stripe Setup
 
 1. Create a Stripe account
-2. Create a product for "Claim Letter Generation" at $49
+2. Create a product for "Claim Letter Generation" at $79
 3. Add the price ID to your environment variables
 
 ### 4. OpenAI Setup

@@ -10,7 +10,7 @@ export async function handler(event) {
     console.log('STRIPE_PRICE_RESPONSE:', process.env.STRIPE_PRICE_RESPONSE);
     
     const { recordId = null } = JSON.parse(event.body || "{}"); // send from client if available
-    const priceId = process.env.STRIPE_PRICE_RESPONSE || "price_49USD_single";
+    const priceId = process.env.STRIPE_PRICE_RESPONSE || "price_79USD_single";
     
     // Validate required environment variables
     if (!process.env.SITE_URL) {
