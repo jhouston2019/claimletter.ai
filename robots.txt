@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://taxletterhelp.com/sitemap.xml
+Sitemap: https://claimletterhelpai.netlify.app/sitemap.xml
